@@ -2,6 +2,10 @@
 
 All notable changes to MUI Icon Preview will be documented in this file.
 
+## [0.1.1] - 2026-09-29
+
+- Added an animated hover demo to the documentation and Marketplace description.
+
 ## [0.1.0] - 2026-09-29
 
 - Added offline SVG previews for direct and barrel MUI icon imports.

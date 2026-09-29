@@ -4,6 +4,8 @@ Preview icons from `@mui/icons-material` without leaving VS Code. The extension 
 
 [![MIT License](https://img.shields.io/github/license/IgorBezanovic/mui-icon-preview)](LICENSE)
 
+![MUI Icon Preview showing an icon preview on hover in VS Code](images/demo.gif)
+
 ## Features
 
 - Hover an imported MUI icon to see its module and a 64 by 64 SVG preview alongside VS Code's standard TypeScript information.
