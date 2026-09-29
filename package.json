@@ -90,8 +90,8 @@
     "check-types": "tsc --noEmit",
     "lint": "eslint src --max-warnings 0",
     "test": "vscode-test",
-    "vsce:package": "vsce package",
-    "vsce:publish": "vsce publish"
+    "vsce:package": "vsce package --githubBranch master",
+    "vsce:publish": "vsce publish --githubBranch master"
   },
   "devDependencies": {
     "@types/mocha": "^10.0.10",

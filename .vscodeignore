@@ -1,4 +1,6 @@
 .vscode/**
+.github/**
+PUBLISHING.md
 .vscode-test/**
 out/**
 node_modules/**

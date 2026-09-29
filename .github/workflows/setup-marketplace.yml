@@ -1,0 +1,50 @@
+name: Set up Marketplace identity
+
+on:
+  workflow_dispatch:
+
+permissions:
+  contents: read
+  id-token: write
+
+jobs:
+  identity:
+    if: github.ref == 'refs/heads/master'
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    steps:
+      - name: Check Entra configuration
+        env:
+          AZURE_CLIENT_ID: ${{ secrets.AZURE_CLIENT_ID }}
+          AZURE_TENANT_ID: ${{ secrets.AZURE_TENANT_ID }}
+        run: |
+          if [[ -z "$AZURE_CLIENT_ID" || -z "$AZURE_TENANT_ID" ]]; then
+            echo '::error::Set AZURE_CLIENT_ID and AZURE_TENANT_ID in repository Actions secrets. See PUBLISHING.md.'
+            exit 1
+          fi
+
+      - name: Sign in with Microsoft Entra ID
+        uses: azure/login@v3
+        with:
+          client-id: ${{ secrets.AZURE_CLIENT_ID }}
+          tenant-id: ${{ secrets.AZURE_TENANT_ID }}
+          allow-no-subscriptions: true
+
+      - name: Get Marketplace identity ID
+        run: |
+          identity_id=$(az rest \
+            --method get \
+            --url https://app.vssps.visualstudio.com/_apis/profile/profiles/me \
+            --resource 499b84ac-1321-427f-aa17-267ca6975798 \
+            --query id --output tsv)
+          if [[ ! "$identity_id" =~ ^[0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{12}$ ]]; then
+            echo '::error::No valid Marketplace identity ID returned. See the troubleshooting section in PUBLISHING.md.'
+            exit 1
+          fi
+          {
+            echo '## Marketplace identity'
+            echo "Identity ID: \`$identity_id\`"
+            echo ''
+            echo 'Add this ID as a Contributor to the IgorBezanovic publisher at https://marketplace.visualstudio.com/manage.'
+            echo 'Then run Publish extension on master. This setup workflow does not publish or change the package version.'
+          } >> "$GITHUB_STEP_SUMMARY"

@@ -66,6 +66,12 @@ Build a production bundle with `npm run package`.
 
 Create a Marketplace package with `npm run vsce:package`.
 
+## Publishing
+
+Merges into `master` automatically test the extension, increase its patch version, package it, and publish it to the VS Code Marketplace. The workflow commits the updated `package.json` and `package-lock.json` back to `master`. No manual version command is needed; include any release notes in `CHANGELOG.md` with your changes.
+
+See [PUBLISHING.md](PUBLISHING.md) for the required one-time GitHub Actions authentication setup and release instructions.
+
 ## License
 
 Released under the [MIT License](LICENSE).
