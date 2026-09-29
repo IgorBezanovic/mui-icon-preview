@@ -8,3 +8,4 @@ All notable changes to MUI Icon Preview will be documented in this file.
 - Added icon name completion with preview documentation.
 - Added the **MUI Icons: Search** command for import and component insertion.
 - Added activation-time SVG caching and output-channel diagnostics.
+- Added Marketplace metadata, original extension artwork, security policy, and privacy documentation.
