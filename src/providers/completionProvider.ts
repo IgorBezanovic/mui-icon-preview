@@ -10,15 +10,21 @@ export class MuiIconCompletionProvider implements vscode.CompletionItemProvider<
 
 	public async provideCompletionItems(
 		document: vscode.TextDocument,
-		_position: vscode.Position,
+		position: vscode.Position,
 		token: vscode.CancellationToken,
 	): Promise<vscode.CompletionList<MuiCompletionItem> | undefined> {
+		const wordRange = document.getWordRangeAtPosition(position, /[A-Za-z][A-Za-z0-9]*/);
+		const prefix = wordRange ? document.getText(wordRange) : '';
+		if (prefix.length < 2) {
+			return undefined;
+		}
+
 		const iconNames = await this.iconLoader.getIconNames(document.uri);
 		if (token.isCancellationRequested || iconNames.length === 0) {
 			return undefined;
 		}
 
-		const items = iconNames.map((iconName): MuiCompletionItem => {
+		const items = filterIconNames(iconNames, prefix).map((iconName): MuiCompletionItem => {
 			const localName = `${iconName}Icon`;
 			return {
 				label: localName,
@@ -49,4 +55,15 @@ export class MuiIconCompletionProvider implements vscode.CompletionItemProvider<
 		item.documentation = documentation;
 		return item;
 	}
+}
+
+export function filterIconNames(
+	iconNames: readonly string[],
+	prefix: string,
+	limit = 200,
+): readonly string[] {
+	const normalizedPrefix = prefix.toLocaleLowerCase();
+	return iconNames
+		.filter((iconName) => `${iconName}Icon`.toLocaleLowerCase().startsWith(normalizedPrefix))
+		.slice(0, limit);
 }

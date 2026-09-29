@@ -9,7 +9,7 @@ Preview icons from `@mui/icons-material` without leaving VS Code. The extension 
 - Hover an imported MUI icon to see its module and a 64 by 64 SVG preview alongside VS Code's standard TypeScript information.
 - Complete icon component names in TypeScript, TSX, JavaScript, and JSX files. The selected completion includes an SVG preview.
 - Run **MUI Icons: Search** from the Command Palette to search installed icons and insert both the import and component usage.
-- Cache installed icon SVGs in memory to avoid repeated filesystem reads.
+- Index installed icons at activation and cache SVG previews on demand to avoid repeated filesystem reads.
 
 ## Usage
 
@@ -30,6 +30,8 @@ Run **MUI Icons: Search** from the Command Palette to search the locally install
 ## Requirements
 
 The opened project must have `@mui/icons-material` installed. No network access is used by the extension.
+
+MUI Icon Preview requires VS Code 1.85 or newer and a file-system-backed workspace. Local, SSH, WSL, and Dev Container workspaces are supported when `@mui/icons-material` is installed in that workspace.
 
 Supported editor languages:
 

@@ -44,14 +44,7 @@ export class IconLoader {
 
 		for (const root of uniqueRoots) {
 			const names = await this.getNamesFromRoot(root);
-			this.output.appendLine(`Caching ${names.length} icons from ${root}`);
-			for (let index = 0; index < names.length; index += 1) {
-				await this.loadFromRoot(root, names[index]);
-				if (index > 0 && index % 250 === 0) {
-					await new Promise<void>((resolve) => setImmediate(resolve));
-				}
-			}
-			this.output.appendLine(`Cached ${names.length} MUI icon previews.`);
+			this.output.appendLine(`Indexed ${names.length} MUI icons from ${root}.`);
 		}
 	}
 

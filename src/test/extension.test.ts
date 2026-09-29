@@ -1,4 +1,5 @@
 import * as assert from 'assert';
+import { filterIconNames } from '../providers/completionProvider';
 import { createIconPreviewFromSource } from '../utils/iconLoader';
 import { resolveMuiIconImport, resolveMuiIconImports } from '../utils/importResolver';
 
@@ -50,5 +51,13 @@ suite('MUI icon source conversion', () => {
 		assert.ok(preview);
 		assert.match(preview.svg, /<circle cx="12" cy="12" r="3" \/>/);
 		assert.match(preview.svg, /<path d="M19\.4 13" \/>/);
+	});
+});
+
+suite('MUI icon completion filtering', () => {
+	test('matches component prefixes case-insensitively and limits results', () => {
+		const results = filterIconNames(['Delete', 'Home', 'HomeOutlined', 'HomeRounded'], 'home', 2);
+
+		assert.deepStrictEqual(results, ['Home', 'HomeOutlined']);
 	});
 });

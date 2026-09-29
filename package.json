@@ -20,11 +20,11 @@
   },
   "version": "0.1.0",
   "engines": {
-    "vscode": "^1.138.0"
+    "vscode": "^1.85.0"
   },
   "categories": [
-    "Programming Languages",
-    "Visualization"
+    "Visualization",
+    "Other"
   ],
   "keywords": [
     "mui",
@@ -42,6 +42,18 @@
   },
   "pricing": "Free",
   "qna": "marketplace",
+  "extensionKind": [
+    "workspace"
+  ],
+  "capabilities": {
+    "untrustedWorkspaces": {
+      "supported": true
+    },
+    "virtualWorkspaces": {
+      "supported": false,
+      "description": "MUI Icon Preview requires access to the workspace's local node_modules directory."
+    }
+  },
   "badges": [
     {
       "url": "https://img.shields.io/github/license/IgorBezanovic/mui-icon-preview",
@@ -84,7 +96,7 @@
   "devDependencies": {
     "@types/mocha": "^10.0.10",
     "@types/node": "24.x",
-    "@types/vscode": "^1.138.0",
+    "@types/vscode": "1.85.0",
     "@vscode/test-cli": "^0.0.15",
     "@vscode/test-electron": "^3.0.0",
     "@vscode/vsce": "^4.0.0",
