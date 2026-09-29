@@ -1,6 +1,8 @@
 .vscode/**
 .github/**
 PUBLISHING.md
+images/icon.svg
+**/*.vsix
 .vscode-test/**
 out/**
 node_modules/**
