@@ -33,21 +33,6 @@ export class IconLoader {
 
 	public constructor(private readonly output: vscode.OutputChannel) {}
 
-	public async initialize(workspaceFolders: readonly vscode.WorkspaceFolder[]): Promise<void> {
-		const roots = await Promise.all(workspaceFolders.map((folder) => this.findPackageRoot(folder.uri.fsPath)));
-		const uniqueRoots = [...new Set(roots.filter((root): root is string => root !== undefined))];
-
-		if (uniqueRoots.length === 0) {
-			this.output.appendLine('No workspace installation of @mui/icons-material found. Icons will be loaded on demand.');
-			return;
-		}
-
-		for (const root of uniqueRoots) {
-			const names = await this.getNamesFromRoot(root);
-			this.output.appendLine(`Indexed ${names.length} MUI icons from ${root}.`);
-		}
-	}
-
 	public async getIconNames(documentUri?: vscode.Uri): Promise<readonly string[]> {
 		const root = await this.resolvePackageRoot(documentUri);
 		if (!root) {

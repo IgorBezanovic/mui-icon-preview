@@ -3,10 +3,13 @@ import { IconLoader } from '../utils/iconLoader';
 
 interface MuiCompletionItem extends vscode.CompletionItem {
 	readonly muiIconName: string;
+	readonly documentUri: vscode.Uri;
 }
 
+type CompletionIconLoader = Pick<IconLoader, 'getIconNames' | 'getIcon'>;
+
 export class MuiIconCompletionProvider implements vscode.CompletionItemProvider<MuiCompletionItem> {
-	public constructor(private readonly iconLoader: IconLoader) {}
+	public constructor(private readonly iconLoader: CompletionIconLoader) {}
 
 	public async provideCompletionItems(
 		document: vscode.TextDocument,
@@ -27,13 +30,18 @@ export class MuiIconCompletionProvider implements vscode.CompletionItemProvider<
 		const items = filterIconNames(iconNames, prefix).map((iconName): MuiCompletionItem => {
 			const localName = `${iconName}Icon`;
 			return {
-				label: localName,
+				label: {
+					label: localName,
+					detail: ` ${iconName}`,
+					description: 'MUI Icon',
+				},
 				kind: vscode.CompletionItemKind.Class,
-				detail: `MUI icon · @mui/icons-material/${iconName}`,
+				detail: `MUI icon from @mui/icons-material/${iconName}`,
 				filterText: `${localName} ${iconName}`,
 				insertText: localName,
 				sortText: `mui-${localName}`,
 				muiIconName: iconName,
+				documentUri: document.uri,
 			};
 		});
 
@@ -44,14 +52,20 @@ export class MuiIconCompletionProvider implements vscode.CompletionItemProvider<
 		item: MuiCompletionItem,
 		token: vscode.CancellationToken,
 	): Promise<MuiCompletionItem> {
-		const preview = await this.iconLoader.getIcon(item.muiIconName, vscode.window.activeTextEditor?.document.uri);
+		const preview = await this.iconLoader.getIcon(item.muiIconName, item.documentUri);
 		if (!preview || token.isCancellationRequested) {
 			return item;
 		}
 
 		const documentation = new vscode.MarkdownString(undefined, true);
+		documentation.isTrusted = true;
 		documentation.supportHtml = true;
-		documentation.appendMarkdown(`<img src="${preview.dataUri}" width="64" height="64" alt="${item.muiIconName} icon preview">`);
+		documentation.appendMarkdown(`### ${item.muiIconName}Icon\n\n`);
+		documentation.appendMarkdown(`<img src="${preview.dataUri}" width="64" height="64" alt="${item.muiIconName} icon preview">\n\n`);
+		documentation.appendCodeblock(
+			`import ${item.muiIconName}Icon from '@mui/icons-material/${item.muiIconName}';`,
+			'typescript',
+		);
 		item.documentation = documentation;
 		return item;
 	}

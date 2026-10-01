@@ -26,8 +26,4 @@ export function activate(context: vscode.ExtensionContext): void {
 	);
 
 	output.appendLine('MUI Icon Preview activated.');
-	void iconLoader.initialize(vscode.workspace.workspaceFolders ?? []).catch((error: unknown) => {
-		const message = error instanceof Error ? error.message : String(error);
-		output.appendLine(`Icon cache initialization failed: ${message}`);
-	});
 }
