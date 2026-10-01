@@ -1,6 +1,7 @@
 import * as assert from 'assert';
-import { filterIconNames } from '../providers/completionProvider';
-import { createIconPreviewFromSource } from '../utils/iconLoader';
+import * as vscode from 'vscode';
+import { filterIconNames, MuiIconCompletionProvider } from '../providers/completionProvider';
+import { createIconPreviewFromSource, IconLoader } from '../utils/iconLoader';
 import { resolveMuiIconImport, resolveMuiIconImports } from '../utils/importResolver';
 
 suite('MUI import resolver', () => {
@@ -59,5 +60,49 @@ suite('MUI icon completion filtering', () => {
 		const results = filterIconNames(['Delete', 'Home', 'HomeOutlined', 'HomeRounded'], 'home', 2);
 
 		assert.deepStrictEqual(results, ['Home', 'HomeOutlined']);
+	});
+
+	test('lazily resolves a local preview for the originating document', async () => {
+		const document = await vscode.workspace.openTextDocument({
+			language: 'typescriptreact',
+			content: 'const view = <Home',
+		});
+		const preview = createIconPreviewFromSource(
+			'Home',
+			`export default createSvgIcon(_jsx("path", { d: "M10 20v-6h4v6" }), "Home");`,
+		);
+		assert.ok(preview);
+
+		let previewDocumentUri: vscode.Uri | undefined;
+		const iconLoader: Pick<IconLoader, 'getIconNames' | 'getIcon'> = {
+			getIconNames: async () => ['Home'],
+			getIcon: async (iconName, documentUri) => {
+				assert.strictEqual(iconName, 'Home');
+				previewDocumentUri = documentUri;
+				return preview;
+			},
+		};
+		const provider = new MuiIconCompletionProvider(iconLoader);
+		const completions = await provider.provideCompletionItems(
+			document,
+			new vscode.Position(0, 'const view = <Home'.length),
+			new vscode.CancellationTokenSource().token,
+		);
+
+		assert.ok(completions);
+		assert.strictEqual(completions.items.length, 1);
+		const [item] = completions.items;
+		assert.deepStrictEqual(item.label, {
+			label: 'HomeIcon',
+			detail: ' Home',
+			description: 'MUI Icon',
+		});
+		assert.strictEqual(item.documentation, undefined);
+
+		const resolved = await provider.resolveCompletionItem(item, new vscode.CancellationTokenSource().token);
+		assert.strictEqual(previewDocumentUri?.toString(), document.uri.toString());
+		assert.ok(resolved.documentation instanceof vscode.MarkdownString);
+		assert.match(resolved.documentation.value, /data:image\/svg\+xml;base64,/);
+		assert.match(resolved.documentation.value, /import HomeIcon from '@mui\/icons-material\/Home'/);
 	});
 });

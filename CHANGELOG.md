@@ -2,6 +2,12 @@
 
 All notable changes to MUI Icon Preview will be documented in this file.
 
+## [0.1.2] - 2026-10-01
+
+- Added richer IntelliSense rows and lazy SVG previews in the suggestion details panel.
+- Deferred icon package indexing until first use while retaining package, name, and SVG caches.
+- Documented the VS Code completion-row image limitation and offline fallback behavior.
+
 ## [0.1.1] - 2026-09-29
 
 - Added an animated hover demo to the documentation and Marketplace description.

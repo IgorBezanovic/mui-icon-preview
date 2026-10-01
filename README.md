@@ -4,14 +4,16 @@ Preview icons from `@mui/icons-material` without leaving VS Code. The extension 
 
 [![MIT License](https://img.shields.io/github/license/IgorBezanovic/mui-icon-preview)](LICENSE)
 
+### Hover preview
+
 ![MUI Icon Preview showing an icon preview on hover in VS Code](images/demo.gif)
 
 ## Features
 
 - Hover an imported MUI icon to see its module and a 64 by 64 SVG preview alongside VS Code's standard TypeScript information.
-- Complete icon component names in TypeScript, TSX, JavaScript, and JSX files. The selected completion includes an SVG preview.
+- Complete icon component names in TypeScript, TSX, JavaScript, and JSX files. The focused completion renders an SVG in the suggestion details panel.
 - Run **MUI Icons: Search** from the Command Palette to search installed icons and insert both the import and component usage.
-- Index installed icons at activation and cache SVG previews on demand to avoid repeated filesystem reads.
+- Index icon names on first use and cache names, package locations, and SVG previews to avoid repeated filesystem reads.
 
 ## Usage
 
@@ -28,6 +30,16 @@ export function HomeLink() {
 Hover `HomeIcon` to see a compact 64 by 64 preview, its import source, a link to the matching MUI documentation search, and the standard TypeScript hover information.
 
 Run **MUI Icons: Search** from the Command Palette to search the locally installed icon catalog. Selecting an icon inserts its import and JSX component usage.
+
+## Completion previews
+
+Type a prefix such as `<Home` in a supported file, then focus a MUI icon completion. Completion rows identify matching entries as “MUI Icon” and the suggestion details panel shows the local SVG preview plus the import path.
+
+If the details panel is collapsed, use VS Code's **Toggle Suggestion Details** command to show it.
+
+VS Code extensions cannot place arbitrary images directly in completion rows. `CompletionItemLabel` is text-only, and `CompletionItemKind` displays only built-in theme icons.
+
+MUI Icon Preview uses `CompletionItem.documentation` for previews and loads that documentation in `resolveCompletionItem`, so SVG work happens only for the focused suggestion. SVG data URIs are generated locally from the installed workspace package, cached, and if loading fails the completion remains usable without documentation.
 
 ## Requirements
 
